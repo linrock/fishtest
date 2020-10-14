@@ -4,10 +4,18 @@
   <title>Stockfish Testing Framework</title>
   <meta name="csrf-token" content="${request.session.get_csrf_token()}" />
 
+  %if False:
   <link href="https://stackpath.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
         integrity="sha384-4FeI0trTH/PCsLWrGCD1mScoFu9Jf2NdknFdFoJhXZFwsvzZ3Bo5sAh7+zL8Xgnd"
         crossorigin="anonymous"
         rel="stylesheet">
+  %endif
+
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
+        integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
+        crossorigin="anonymous">
+
   <link href="/css/application.css?v=3" rel="stylesheet">
   %if request.cookies.get('theme') == 'dark':
     <link href="/css/theme.dark.css" rel="stylesheet">
@@ -29,7 +37,7 @@
 <body>
   <div class="clearfix"
        style="width: 100px; float: left; padding: 12px 0;">
-    <ul class="nav nav-list">
+    <ul class="nav nav-list flex-column">
 
       <li class="nav-header">Tests</li>
       <li><a href="/tests">Overview</a></li>
