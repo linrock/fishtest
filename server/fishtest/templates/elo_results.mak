@@ -36,7 +36,7 @@
         <div style="margin-left:90px;">
     % endif
 % endif
-<pre style="${get_run_style(run)}" class="elo-results">
+<pre style="${get_run_style(run)}" class="border rounded bg-light elo-results">
   ${list_info(run)}
 </pre>
 % if show_gauge:

@@ -1,5 +1,6 @@
 <%inherit file="base.mak"/>
 <h4> </h4>
+
 <ul class="inline">
   <li><dl class="dl-horizontal">
     <dt>Testers</dt>
@@ -21,7 +22,7 @@
   </li></dl>
 </ul>
 
-<table class="table table-striped table-condensed">
+<table class="table table-striped table-sm">
   <thead>
     <tr>
       <th>Username</th>
@@ -37,7 +38,7 @@
     % for user in users:
         <tr>
          <td>${user['username']}</td>
-         <td data-diff="${user['diff']}" style="text-align:right">${user['last_updated']}</td>
+         <td style="text-align:right">${user['last_updated']}</td>
          <td style="text-align:right">${int(user['games_per_hour'])}</td>
          <td style="text-align:right">${int(user['cpu_hours'])}</td>
          <td style="text-align:right">${int(user['games'])}</td>

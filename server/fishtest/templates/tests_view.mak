@@ -21,19 +21,18 @@ from fishtest.util import worker_name
 </h3>
 
 <div class="row-fluid">
-  <div style="display:inline-block;">
+  <div style="display: inline-block;">
     <%include file="elo_results.mak" args="run=run" />
   </div>
 </div>
 
-<div class="row-fluid">
-
-  <div class="span8" style="min-width: 540px">
+<div class="row row-fluid">
+  <div class="col-8" style="min-width: 540px">
     <h4>Details</h4>
 
     <%! import markupsafe %>
 
-    <table class="table table-condensed">
+    <table class="table table-sm">
       % for arg in run_args:
           % if len(arg[2]) == 0:
               <tr>
@@ -95,7 +94,7 @@ from fishtest.util import worker_name
     </table>
   </div>
 
-  <div class="span4">
+  <div class="col-4">
     <h4>Actions</h4>
     % if not run['finished']:
         <form action="/tests/stop" method="POST" style="display: inline;">
@@ -104,6 +103,7 @@ from fishtest.util import worker_name
             Stop
           </button>
         </form>
+
         % if not run.get('approved', False):
             <span>
               <form action="/tests/approve" method="POST" style="display: inline;">
@@ -124,7 +124,7 @@ from fishtest.util import worker_name
         </form>
     % endif
     <a href="/tests/run?id=${run['_id']}">
-      <button class="btn">Reschedule</button>
+      <button class="btn btn-light border">Reschedule</button>
     </a>
 
     <br>
@@ -184,7 +184,7 @@ from fishtest.util import worker_name
     <hr>
 
     <h4>Time</h4>
-    <table class="table table-condensed">
+    <table class="table table-sm">
       <tr><td>start time</td><td>${run['start_time'].strftime("%Y-%m-%d %H:%M:%S")}</td></tr>
       <tr><td>last updated</td><td>${run['last_updated'].strftime("%Y-%m-%d %H:%M:%S")}</td></tr>
     </table>
@@ -233,7 +233,7 @@ from fishtest.util import worker_name
 </section>
 
 <h3>Tasks ${totals}</h3>
-<table class='table table-striped table-condensed'>
+<table class='table table-striped table-sm'>
   <thead>
     <tr>
       <th>Idx</th>
