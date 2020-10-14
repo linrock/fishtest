@@ -13,7 +13,7 @@ The recommended net for a given Stockfish executable can be found as the default
       ${'Hide non default nets' if non_default_shown else 'Show non default nets'}
 </button>
 
-<table class="table table-striped table-condensed" style="max-width: 900px;">
+<table class="table table-striped table-sm" style="max-width: 900px;">
  <thead>
   <tr>
    <th>Time</th>

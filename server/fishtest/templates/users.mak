@@ -21,7 +21,7 @@
 </li></dl>
 </ul>
 
-<table class="table table-striped table-condensed">
+<table class="table table-striped table-sm">
  <thead>
   <tr>
    <th>Username</th>

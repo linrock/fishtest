@@ -56,7 +56,7 @@
 
 ${pagination()}
 
-<table class="table table-striped table-condensed">
+<table class="table table-striped table-sm">
   <tbody>
     %for run in runs:
       <tr>

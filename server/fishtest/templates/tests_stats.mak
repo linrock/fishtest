@@ -47,7 +47,7 @@
       <H3> Raw statistics for ${run['_id']}</H3>
       <em> Unless otherwise specified, all Elo quantities below are logistic. </em>
       <H4> Context </H4>
-      	   <table class="table table-condensed">
+      	   <table class="table table-sm">
 	   	  <tr><td>TC</td><td>${run['args']['tc']}</td></tr>
 		  <tr><td>Book</td><td>${run['args']['book']}</td></tr>
 		  <tr><td>Threads</td><td>${run['args']['threads']}</td></tr>
@@ -64,7 +64,7 @@
       elo_model=run['args']['sprt'].get('elo_model','BayesElo')
       o=run['args']['sprt'].get('overshoot',None)
       %>
-      <table class="table table-condensed">
+      <table class="table table-sm">
 	<tr><td>Alpha</td><td>${alpha}</td></tr>
 	<tr><td>Beta</td><td>${beta}</td></tr>
         <tr><td>Elo0 (${elo_model})</td><td>${elo0}</td></tr>
@@ -86,7 +86,7 @@
 		 belo0,belo1=[fishtest.stats.stat_util.elo_to_bayeselo(elo_, draw_ratio)[0] for elo_ in [elo0,elo1]]
 	    score0,score1=[fishtest.stats.stat_util.L(elo_) for elo_ in (lelo0,lelo1)]
       %>
-      <table class="table table-condensed">	
+      <table class="table table-sm">	
 	<tr><td>Draw ratio</td><td>${"%.5f"%draw_ratio}</td></tr>
 	<tr><td>DrawElo (BayesElo)</td><td>${"%.2f"%drawelo}</td></tr>
 % if has_sprt:
@@ -150,7 +150,7 @@
 	 %>
       <H4> Pentanomial statistics</H4>
       <H5> Basic statistics </H5>
-      <table class="table table-condensed">
+      <table class="table table-sm">
 	<tr><td>Elo</td><td>${"%.4f [%.4f, %.4f]"%(elo5,elo5_l,elo5_u)}</td></tr>
 	<tr><td>LOS(1-p)</td><td>${"%.5f"%LOS5}</td></tr>
 % if has_sprt:
@@ -166,14 +166,14 @@
       Note that we are not aware of any literature
       indicating that any of these LLR quantities is theoretically better than the others.
       </em>
-      <table class="table table-condensed" style="margin-top:1em;">
+      <table class="table table-sm" style="margin-top:1em;">
       	<tr><td>Exact</td><td>${"%.5f"%LLR5_exact}</td></tr>
       	<tr><td>Alt</td><td>${"%.5f"%LLR5_alt}</td></tr>
       	<tr><td>Alt2</td><td>${"%.5f"%LLR5_alt2}</td></tr>
       </table>
 % endif ## has_sprt
       <H5> Auxilliary statistics </H5>	
-      <table class="table table-condensed">	
+      <table class="table table-sm">	
 	<tr><td>Games</td><td>${int(games5)}</td></tr>
 	<tr><td>Results(0-2)</td><td>${results5}</td></tr>
 	<tr><td>Distribution</td><td>${pdf5_s}</td></tr>
@@ -255,7 +255,7 @@
 		elo3_u=elo3+elo95_3
 	 %>
      <H5> Basic statistics</H5>
-      <table class="table table-condensed">
+      <table class="table table-sm">
 	<tr><td>Elo</td><td>${"%.4f [%.4f, %.4f]"%(elo3,elo3_l,elo3_u)}</td></tr>
 	<tr><td>LOS(1-p)</td><td>${"%.5f"%LOS3}</td></tr>
 % if has_sprt:
@@ -266,7 +266,7 @@
        <H5> Generalized Log Likelihood Ratio </H5>
        <em> BayesElo is the LLR as computed using the BayesElo model. It is not clear how to
        generalize it to the pentanomial case. </em>
-       <table class="table table-condensed" style="margin-top:1em;">
+       <table class="table table-sm" style="margin-top:1em;">
        	<tr><td>Exact</td><td>${"%.5f"%LLR3_exact}</td></tr>
        	<tr><td>Alt</td><td>${"%.5f"%LLR3_alt}</td></tr>
       	<tr><td>Alt2</td><td>${"%.5f"%LLR3_alt2}</td></tr>
@@ -274,7 +274,7 @@
       </table>
 % endif  ## has_sprt
      <H5> Auxilliary statistics</H5>
-      <table class="table table-condensed">
+      <table class="table table-sm">
 	<tr><td>Games</td><td>${int(games3)}</td></tr>
 	<tr><td>Results [losses, draws, wins]</td><td>${results3}</td></tr>
 	<tr><td>Distribution {loss ratio, draw ratio, win ratio}</td><td>${pdf3_s}</td></tr>
@@ -297,7 +297,7 @@
       </table>
 % if has_pentanomial:
       <H4> Comparison</H4>
-      	   <table class="table table-condensed">
+      	   <table class="table table-sm">
 		<tr><td>Variance ratio (pentanomial/trinomial)</td><td>${"%.5f"%ratio}</td></tr>
 	   	<tr><td>Variance difference (trinomial-pentanomial)</td><td>${"%.5f"%var_diff}</td></tr>
 	   	<tr><td>RMS bias</td><td>${"%.5f"%RMS_bias}</td></tr>
