@@ -17,17 +17,17 @@
 </h3>
 
 <div class="row-fluid">
-  <div style="display:inline-block;">
+  <div style="display: inline-block;">
     <%include file="elo_results.mak" args="run=run" />
   </div>
 </div>
 
-<div class="row-fluid">
+<div class="row row-fluid">
 
-<div class="span8" style="min-width: 540px">
+<div class="col-8" style="min-width: 540px">
   <h4>Details</h4>
 
-	<%! import markupsafe %>
+	<%!import markupsafe %>
 
   <table class="table table-sm">
     %for arg in run_args:
@@ -91,7 +91,7 @@
   </table>
 </div>
 
-<div class="span4">
+<div class="col-4">
   <h4>Actions</h4>
   %if not run['finished']:
     <form action="/tests/stop" method="POST" style="display: inline;">
@@ -120,7 +120,7 @@
     </form>
   %endif
   <a href="/tests/run?id=${run['_id']}">
-    <button class="btn">Reschedule</button>
+    <button class="btn btn-light">Reschedule</button>
   </a>
 
   <br/>
@@ -144,14 +144,14 @@
   <hr>
 
   <form class="form" action="/tests/modify" method="POST">
-    <label class="control-label">Number of games:</label>
-    <input type="text" name="num-games" value="${run['args']['num_games']}">
+    <label class="control-label">Number of games:</label><br>
+    <input type="text" name="num-games" value="${run['args']['num_games']}"><br>
 
-    <label class="control-label">Adjust priority (higher is more urgent):</label>
-    <input type="text" name="priority" value="${run['args']['priority']}">
+    <label class="control-label">Adjust priority (higher is more urgent):</label><br>
+    <input type="text" name="priority" value="${run['args']['priority']}"><br>
 
-    <label class="control-label">Adjust throughput (%):</label>
-    <input type="text" name="throughput" value="${run['args'].get('throughput', 1000)}">
+    <label class="control-label">Adjust throughput (%):</label><br>
+    <input type="text" name="throughput" value="${run['args'].get('throughput', 1000)}"><br>
 
     <div class="control-group">
       <label class="checkbox">
