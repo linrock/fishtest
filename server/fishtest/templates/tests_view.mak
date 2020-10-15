@@ -120,7 +120,7 @@
     </form>
   %endif
   <a href="/tests/run?id=${run['_id']}">
-    <button class="btn btn-light">Reschedule</button>
+    <button class="btn btn-light border">Reschedule</button>
   </a>
 
   <br/>

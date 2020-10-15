@@ -13,7 +13,7 @@
       ${games_per_minute} games/minute
       ${pending_hours} hours remaining
     </span>
-    <button id="machines-button" class="btn btn-light">
+    <button id="machines-button" class="btn btn-light border">
       ${'Hide' if machines_shown else 'Show'}
     </button>
   </h3>
