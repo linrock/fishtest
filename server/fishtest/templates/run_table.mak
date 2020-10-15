@@ -96,7 +96,7 @@ ${pagination()}
           </td>
         %endif
 
-        <td style="width: 6%;">
+        <td style="width: 6%;" class="text-nowrap">
           ${run['start_time'].strftime("%y-%m-%d")}
         </td>
 
@@ -125,7 +125,8 @@ ${pagination()}
           %else:
             ${run['args']['num_games']}
           %endif
-          @ ${run['args']['tc']} th ${str(run['args'].get('threads',1))}
+          @ ${run['args']['tc']}
+          <span class="text-nowrap">th ${str(run['args'].get('threads',1))}</span>
           <br>
           ${('cores: '+str(run['cores'])) if not run['finished'] and 'cores' in run else ''}
         </td>
