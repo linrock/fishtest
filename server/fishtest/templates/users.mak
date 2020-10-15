@@ -1,25 +1,27 @@
 <%inherit file="base.mak"/>
 <h4> </h4>
-<ul class="inline">
-<li><dl class="dl-horizontal">
-  <dt>Testers</dt>
-  <dd>${sum(u['last_updated'] != 'Never' for u in users)}</dd>
-  <dt>Developers</dt>
-  <dd>${sum(u['tests'] > 0 for u in users)}</dd>
-</dl></li>
-<li><dl class="dl-horizontal">
-  <dt>Active testers</dt>
-  <dd>${sum(u['games_per_hour'] > 0 for u in users)}</dd>
-  <dt>Tests submitted</dt>
-  <dd>${sum(u['tests'] for u in users)}</dd>
-</li></dl>
-<li><dl class="dl-horizontal">
-  <dt>Games played</dt>
-  <dd>${sum(u['games'] for u in users)}</dd>
-  <dt>CPU time</dt>
-  <dd>${'%.2f years' % (sum(u['cpu_hours'] for u in users)/(24*365))}</dd>
-</li></dl>
-</ul>
+
+<dl class="row">
+  <dt class="col-2">Testers</dt>
+  <dd class="col-2">${sum(u['last_updated'] != 'Never' for u in users)}</dd>
+
+  <dt class="col-2">Active testers</dt>
+  <dd class="col-2">${sum(u['games_per_hour'] > 0 for u in users)}</dd>
+
+  <dt class="col-2">Games played</dt>
+  <dd class="col-2">${sum(u['games'] for u in users)}</dd>
+</dl>
+
+<dl class="row">
+  <dt class="col-2">Developers</dt>
+  <dd class="col-2">${sum(u['tests'] > 0 for u in users)}</dd>
+
+  <dt class="col-2">Tests submitted</dt>
+  <dd class="col-2">${sum(u['tests'] for u in users)}</dd>
+
+  <dt class="col-2">CPU time</dt>
+  <dd class="col-2">${'%.2f years' % (sum(u['cpu_hours'] for u in users)/(24*365))}</dd>
+</dl>
 
 <table class="table table-striped table-sm">
  <thead>

@@ -45,8 +45,10 @@ body {
   margin-top: 12px;
 }
 
+/* Links in the left navigation */
 .nav li a {
   display: block;
+  padding: 2px 0;
 }
 
 th {
