@@ -43,7 +43,7 @@
 
 <body>
   <div class="clearfix"
-       style="width: 100px; float: left; padding: 12px 0;">
+       style="width: 105px; float: left; padding: 12px 0;">
     <ul class="nav nav-list flex-column">
 
       <li class="nav-header">Tests</li>
@@ -107,7 +107,7 @@
   </div>
 
   <div class="clearfix"
-       style="width: calc(100% - 100px); float: left;">
+       style="width: calc(100% - 105px); float: left;">
     <div class="container-fluid">
       <div class="row-fluid">
         <div class="flash-message">
