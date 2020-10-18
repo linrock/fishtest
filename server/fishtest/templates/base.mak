@@ -4,13 +4,6 @@
   <title>Stockfish Testing Framework</title>
   <meta name="csrf-token" content="${request.session.get_csrf_token()}" />
 
-  %if False:
-  <link href="https://stackpath.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.min.css"
-        integrity="sha384-4FeI0trTH/PCsLWrGCD1mScoFu9Jf2NdknFdFoJhXZFwsvzZ3Bo5sAh7+zL8Xgnd"
-        crossorigin="anonymous"
-        rel="stylesheet">
-  %endif
-
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css"
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
@@ -28,12 +21,6 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"
           integrity="sha384-ho+j7jyWK8fNQe+A12Hb8AhRq26LrZ/JpcUGGOn+Y7RsweNrtN/tE3MoK7ZeZDyx"
           crossorigin="anonymous"></script>
-
-  %if False:
-  <script src="https://stackpath.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"
-          integrity="sha384-vOWIrgFbxIPzY09VArRHMsxned7WiY6hzIPtAIIeTFuii9y3Cr6HE6fcHXy5CFhc"
-          crossorigin="anonymous"></script>
-  %endif
 
   <script src="/js/jquery.cookie.js" defer></script>
   <script src="/js/application.js?v=6" defer></script>
