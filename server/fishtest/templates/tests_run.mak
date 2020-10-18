@@ -28,7 +28,7 @@
   }
 
   .field-label.leftmost {
-    width: 75px;
+    width: 100px;
     flex-shrink: 0;
   }
 
