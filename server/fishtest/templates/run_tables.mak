@@ -4,7 +4,7 @@
 
   <h3>
     Pending approval - ${len(pending_approval_runs)} tests
-    <button id="pending-button" class="btn btn-light border">
+    <button id="pending-button" class="btn btn-sm btn-light border">
       ${'Hide' if pending_shown else 'Show'}
     </button>
   </h3>
@@ -20,7 +20,7 @@
 
   <h3>
     Paused - ${len(paused_runs)} tests
-    <button id="paused-button" class="btn btn-light border">
+    <button id="paused-button" class="btn btn-sm btn-light border">
       ${'Hide' if paused_shown else 'Show'}
     </button>
   </h3>
