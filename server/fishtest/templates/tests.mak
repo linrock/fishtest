@@ -5,7 +5,7 @@
 <h2>Stockfish Testing Queue</h2>
 
 %if page_idx == 0:
-  <h3>
+  <h4>
     <span>
       ${len(machines)} machines ${cores}
       cores ${'%.2fM' % (nps / (cores * 1000000.0 + 1))} nps
@@ -16,7 +16,7 @@
     <button id="machines-button" class="btn btn-sm btn-light border">
       ${'Hide' if machines_shown else 'Show'}
     </button>
-  </h3>
+  </h4>
 
   <div id="machines"
         style="${'' if machines_shown else 'display: none;'}">
