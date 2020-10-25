@@ -943,7 +943,7 @@ class RunDb:
         if "clipping" not in spsa:
             spsa["clipping"] = "old"
         if "rounding" not in spsa:
-            spsa["rounding"] = "deterministic"
+            spsa["rounding"] = "randomized"
 
         # Generate the next set of tuning parameters
         iter_local = spsa["iter"] + 1  # assume at least one completed,

@@ -266,7 +266,7 @@
 	 </div>
     </div>
     <input type="hidden" name="spsa_clipping" value="old" />
-    <input type="hidden" name="spsa_rounding" value="deterministic" />
+    <input type="hidden" name="spsa_rounding" value="randomized" />
   </section>
 
   <section id="worker-and-queue-options">
