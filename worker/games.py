@@ -16,6 +16,7 @@ import sys
 import tempfile
 import threading
 import time
+import traceback
 from base64 import b64decode
 from contextlib import ExitStack
 from datetime import datetime, timedelta, timezone
@@ -24,6 +25,11 @@ from queue import Empty, Queue
 from zipfile import ZipFile
 
 import requests
+
+# no-gpu-modify-nnue branch
+sys.path.insert(0, "../nnue-pytorch")
+from modify_nnue import modify_nnue
+
 
 IS_WINDOWS = "windows" in platform.system().lower()
 IS_MACOS = "darwin" in platform.system().lower()
@@ -1109,11 +1115,131 @@ def launch_fastchess(
         w_params = req["w_params"]
         b_params = req["b_params"]
 
+        def generate_tune_options(params):
+            options = [
+                "{},{}".format(
+                    param["name"], math.floor(param["value"] + random.uniform(0, 1))
+                )
+                for param in params
+            ]
+            return ",".join(options)
+
+        # Generate option strings for white and black parameters
+        w_tune_options = generate_tune_options(w_params)
+        b_tune_options = generate_tune_options(b_params)
+
+        param_names = set([param["name"].split("[")[0] for param in w_params])
+        print("w_params param_names:", param_names)
+
+        nnue_param_names = set([
+            # "ftW",
+            "ftB",
+            "oneW",
+            "oneB",
+            "twoW",
+            "twoB",
+            "oW",
+            "oB",
+        ])
+        nnue_tuning = any([p in nnue_param_names for p in param_names])
+        if nnue_tuning:
+            # Write option names and values to a file
+            with open("w_tune_options.csv", "w") as f:
+                f.write(w_tune_options)
+
+            with open("b_tune_options.csv", "w") as f:
+                f.write(b_tune_options)
+
+            # get path to the base branch stockfish binary
+            stockfish_bin = None
+            for arg in cmd:
+                if arg.startswith('cmd=./'):
+                    stockfish_bin = arg.split('cmd=./')[-1]
+                    break
+
+            def get_eval_file_big(stockfish_bin):
+                uci_cmds = f"uci\nquit\n"
+                try:
+                    p = subprocess.Popen(
+                        f"./{stockfish_bin}",
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                        text=True
+                    )
+                    stdout, stderr = p.communicate(uci_cmds)
+                except (OSError, subprocess.SubprocessError) as e:
+                    traceback.print_exc()
+
+                for row in stdout.strip().split("\n"):
+                    if ' EvalFile ' in row:
+                        return row.split(" ")[-1]
+
+            def get_bench_stats(stockfish_bin, nnue_filename):
+                uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
+                try:
+                    p = subprocess.Popen(
+                        f"./{stockfish_bin}",
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                        text=True
+                    )
+                    stdout, stderr = p.communicate(uci_cmds)
+                except (OSError, subprocess.SubprocessError) as e:
+                    traceback.print_exc()
+
+                return "\n".join(stderr.strip().split("\n")[-4:])
+
+            # get base nnue name a few different ways and print them
+            base_nnue = get_eval_file_big(stockfish_bin)
+            # base_nnue = "nn-ddcfb9224cdb.nnue"
+
+            print(f"EvalFile {base_nnue}")
+            for token in cmd:
+                if token.startswith("option.EvalFile="):
+                    base_nnue_check = token.split("option.EvalFile=")[-1]
+                    print(f"option.EvalFile={base_nnue_check}")
+            print()
+
+            print(f"Preparing nnue from {base_nnue} and w_tune_options.csv ...")
+            w_spsa_nnue = modify_nnue(base_nnue, "w_tune_options.csv")
+            print(get_bench_stats(stockfish_bin, w_spsa_nnue))
+            print()
+
+            print(f"Preparing nnue from {base_nnue} and b_tune_options.csv ...")
+            b_spsa_nnue = modify_nnue(base_nnue, "b_tune_options.csv")
+            print(get_bench_stats(stockfish_bin, b_spsa_nnue))
+            print()
+
+            # print time control
+            tc = {}
+            for arg in cmd:
+                if arg.startswith('tc='):
+                    tc['tc'] = arg
+                elif arg.startswith('option.Threads'):
+                    tc['threads'] = arg.split(".")[-1]
+            print(f"{tc['tc']} {tc['threads']}")
+
+            print('cmd before:')
+            print(cmd)
+
+            # use modified nnue EvalFile instead of setting spsa params
+            idx = cmd.index(f"option.EvalFile={base_nnue}")
+            cmd = (
+                cmd[:idx]
+                + [f"option.EvalFile={w_spsa_nnue}"]
+                + cmd[idx + 1 :]
+            )
+            idx = cmd.index(f"option.EvalFile={base_nnue}")
+            cmd = (
+                cmd[:idx]
+                + [f"option.EvalFile={b_spsa_nnue}"]
+                + cmd[idx + 1 :]
+            )
+
     else:
         w_params = []
         b_params = []
 
     # Run fastchess binary.
+    # set regular spsa params without the nnue-specific params
     # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
     idx = cmd.index("_spsa_")
     cmd = (
@@ -1122,9 +1248,9 @@ def launch_fastchess(
             "option.{}={}".format(
                 x["name"], math.floor(x["value"] + random.uniform(0, 1))
             )
-            for x in w_params
+            for x in w_params if x["name"].split("[")[0] not in nnue_param_names
         ]
-        + cmd[idx + 1 :]
+        + cmd[idx + 1:]
     )
     idx = cmd.index("_spsa_")
     cmd = (
@@ -1133,12 +1259,22 @@ def launch_fastchess(
             "option.{}={}".format(
                 x["name"], math.floor(x["value"] + random.uniform(0, 1))
             )
-            for x in b_params
+            for x in b_params if x["name"].split("[")[0] not in nnue_param_names
         ]
-        + cmd[idx + 1 :]
+        + cmd[idx + 1:]
     )
 
-    # print(cmd)
+    if spsa_tuning:
+        # Update engine names to contain modified nnue names
+        for i,c in enumerate(cmd):
+            if c.startswith('name=') and cmd[i+5].startswith('option.EvalFile='):
+                eval_file = cmd[i+5].split('=')[-1]
+                cmd[i] = f"{c.split('-')[0]}-{eval_file}"
+
+        print()
+        print('cmd after:')
+        print(cmd)
+        print()
     try:
         with subprocess.Popen(
             cmd,
@@ -1185,6 +1321,16 @@ def launch_fastchess(
                     kill_process(p)
                 else:
                     print("done", flush=True)
+
+                if spsa_tuning and nnue_tuning:
+                    print("Removing spsa nnue: ", w_spsa_nnue)
+                    if Path(w_spsa_nnue).exists():
+                        Path(w_spsa_nnue).unlink()
+
+                    print("Removing spsa nnue: ", b_spsa_nnue)
+                    if Path(b_spsa_nnue).exists():
+                        Path(b_spsa_nnue).unlink()
+
     except (OSError, subprocess.SubprocessError) as e:
         print(
             "Exception starting fastchess:\n",
@@ -1192,6 +1338,14 @@ def launch_fastchess(
             sep="",
             file=sys.stderr,
         )
+        if spsa_tuning:
+            print("Removing spsa nnue: ", w_spsa_nnue)
+            if Path(w_spsa_nnue).exists():
+                Path(w_spsa_nnue).unlink()
+
+            print("Removing spsa nnue: ", b_spsa_nnue)
+            if Path(b_spsa_nnue).exists():
+                Path(b_spsa_nnue).unlink()
         raise WorkerException("Unable to start fastchess. Error: {}".format(str(e)))
 
     return task_alive
