@@ -1134,7 +1134,7 @@ def launch_cutechess(
         + cmd[idx + 1 :]
     )
 
-    #    print(cmd)
+    print(cmd)
     try:
         with subprocess.Popen(
             cmd,
