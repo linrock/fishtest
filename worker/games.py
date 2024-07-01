@@ -583,6 +583,9 @@ def make_targets():
 
 
 def find_arch(compiler):
+    return "x86-64-sse3-popcnt"
+
+
     """Find the best arch string based on the cpu/g++ capabilities and Makefile targets"""
     targets = make_targets()
 
