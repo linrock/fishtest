@@ -1163,6 +1163,12 @@ def launch_cutechess(
         + cmd[idx + 1 :]
     )
 
+    # Update engine names to contain modified nnue rather than the same hash
+    for i,c in enumerate(cmd):
+        if c.startswith('name=') and cmd[i+5].startswith('option.EvalFile='):
+            eval_file = cmd[i+5].split('=')[-1]
+            cmd[i] = f"{c.split('-')[0]}-{eval_file}"
+
     print()
     print(cmd)
     print()
