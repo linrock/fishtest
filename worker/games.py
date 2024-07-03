@@ -1131,7 +1131,28 @@ def launch_cutechess(
     print(f"w_spsa_nnue: {w_spsa_nnue}")
     print(f"b_spsa_nnue: {b_spsa_nnue}")
 
+    stockfish_bin = None
+    for param in w_params:
+        if param.startswith('cmd=./'):
+            stockfish_bin = param.split('cmd=./')[-1]
+
+    def get_bench_stats(stockfish_bin, nnue_filename):
+        bench_output = subprocess.run(
+            f'echo -e "setoption name EvalFile value {nnue_filename}\nbench" | ./{stockfish_bin}',
+            shell=True, capture_output=True, text=True
+        )
+        return bench_output.split("\n")[:-4]
+
     print()
+    print(f"w_spsa_nnue: {w_spsa_nnue}")
+    print(get_bench_stats(w_spsa_nnue)
+    print()
+
+    print(f"b_spsa_nnue: {b_spsa_nnue}")
+    print(get_bench_stats(b_spsa_nnue)
+    print()
+
+    print('cmd before:')
     print(cmd)
 
     # use modified nnue instead of setting spsa params at runtime
@@ -1170,10 +1191,11 @@ def launch_cutechess(
             cmd[i] = f"{c.split('-')[0]}-{eval_file}"
 
     print()
+    print('cmd after:')
     print(cmd)
     print()
-    print(" ".join(cmd))
-    print()
+    # print(" ".join(cmd))
+    # print()
 
     try:
         with subprocess.Popen(
