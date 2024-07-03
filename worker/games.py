@@ -1130,6 +1130,10 @@ def launch_cutechess(
     print(f"Preparing nnue from b_tune_options.csv ...")
     b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
 
+    print()
+    print(cmd)
+    print()
+
     # Run cutechess-cli binary.
     # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
     idx = cmd.index("_spsa_")
@@ -1145,7 +1149,12 @@ def launch_cutechess(
         + cmd[idx + 1 :]
     )
 
+    print()
     print(cmd)
+    print()
+    print(" ".join(cmd))
+    print()
+
     try:
         with subprocess.Popen(
             cmd,
