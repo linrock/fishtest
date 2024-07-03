@@ -1135,13 +1135,13 @@ def launch_cutechess(
     idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
     cmd = (
         cmd[:idx]
-        + f"option.EvalFile={w_spsa_nnue}"
+        + [f"option.EvalFile={w_spsa_nnue}"]
         + cmd[idx + 1 :]
     )
     idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
     cmd = (
         cmd[:idx]
-        + f"option.EvalFile={b_spsa_nnue}"
+        + [f"option.EvalFile={b_spsa_nnue}"]
         + cmd[idx + 1 :]
     )
 
