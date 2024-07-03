@@ -25,6 +25,11 @@ from zipfile import ZipFile
 
 import requests
 
+# no-gpu-modify-nnue branch
+sys.path.insert(0, "../nnue-pytorch")
+from modify_nnue import modify_nnue
+
+
 IS_WINDOWS = "windows" in platform.system().lower()
 IS_MACOS = "darwin" in platform.system().lower()
 LOGFILE = "api.log"
@@ -1119,9 +1124,10 @@ def launch_cutechess(
         w_params = []
         b_params = []
 
-    # subprocess.check_output(["python3", "../../nnue-pytorch/load_nnue_test.py"])
-    # subprocess.check_output(["python3", "../../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "w_tune_options.csv"])
-    # subprocess.check_output(["python3", "../../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "b_tune_options.csv"])
+    # subprocess.check_output(["python3", "../nnue-pytorch/load_nnue_test.py"])
+    # subprocess.check_output(["python3", "../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "w_tune_options.csv"])
+    # subprocess.check_output(["python3", "../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "b_tune_options.csv"])
+    modify_nnue
 
     # Run cutechess-cli binary.
     # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
