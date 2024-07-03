@@ -1128,8 +1128,11 @@ def launch_cutechess(
     b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
 
     print()
-    print(cmd)
+    print(f"w_spsa_nnue: {w_spsa_nnue}")
+    print(f"b_spsa_nnue: {b_spsa_nnue}")
+
     print()
+    print(cmd)
 
     # use modified nnue instead of setting spsa params at runtime
     idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
