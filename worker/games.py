@@ -1134,18 +1134,32 @@ def launch_cutechess(
     print(cmd)
     print()
 
+    # use modified nnue instead of setting spsa params at runtime
+    idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
+    cmd = (
+        cmd[:idx]
+        + f"option.EvalFile={w_spsa_nnue}"
+        + cmd[idx + 1 :]
+    )
+    idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
+    cmd = (
+        cmd[:idx]
+        + f"option.EvalFile={b_spsa_nnue}"
+        + cmd[idx + 1 :]
+    )
+
     # Run cutechess-cli binary.
     # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
     idx = cmd.index("_spsa_")
     cmd = (
         cmd[:idx]
-        + (["option.TuneFile=w_tune_options.csv"] if len(w_params) != 0 else [])
+        # + (["option.TuneFile=w_tune_options.csv"] if len(w_params) != 0 else [])
         + cmd[idx + 1 :]
     )
     idx = cmd.index("_spsa_")
     cmd = (
         cmd[:idx]
-        + (["option.TuneFile=b_tune_options.csv"] if len(b_params) != 0 else [])
+        # + (["option.TuneFile=b_tune_options.csv"] if len(b_params) != 0 else [])
         + cmd[idx + 1 :]
     )
 
