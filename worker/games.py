@@ -1124,10 +1124,10 @@ def launch_cutechess(
         w_params = []
         b_params = []
 
-    # subprocess.check_output(["python3", "../nnue-pytorch/load_nnue_test.py"])
-    # subprocess.check_output(["python3", "../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "w_tune_options.csv"])
-    # subprocess.check_output(["python3", "../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "b_tune_options.csv"])
+    print(f"Preparing nnue from w_tune_options.csv ...")
     w_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "w_tune_options.csv")
+
+    print(f"Preparing nnue from b_tune_options.csv ...")
     b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
 
     # Run cutechess-cli binary.
@@ -1193,9 +1193,11 @@ def launch_cutechess(
                 else:
                     print("done", flush=True)
 
-                print("Removing spsa nnue ...")
+                print("Removing spsa nnue: ", w_spsa_nnue)
                 if Path(w_spsa_nnue).exists():
                     Path(w_spsa_nnue).unlink()
+
+                print("Removing spsa nnue: ", b_spsa_nnue)
                 if Path(b_spsa_nnue).exists():
                     Path(b_spsa_nnue).unlink()
 
@@ -1207,9 +1209,11 @@ def launch_cutechess(
             file=sys.stderr,
         )
 
-        print("Removing spsa nnue ...")
+        print("Removing spsa nnue: ", w_spsa_nnue)
         if Path(w_spsa_nnue).exists():
             Path(w_spsa_nnue).unlink()
+
+        print("Removing spsa nnue: ", b_spsa_nnue)
         if Path(b_spsa_nnue).exists():
             Path(b_spsa_nnue).unlink()
 
