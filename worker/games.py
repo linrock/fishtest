@@ -1127,7 +1127,8 @@ def launch_cutechess(
     # subprocess.check_output(["python3", "../nnue-pytorch/load_nnue_test.py"])
     # subprocess.check_output(["python3", "../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "w_tune_options.csv"])
     # subprocess.check_output(["python3", "../nnue-pytorch/modify_nnue.py", "nn-ddcfb9224cdb.nnue", "b_tune_options.csv"])
-    modify_nnue
+    w_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "w_tune_options.csv")
+    b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
 
     # Run cutechess-cli binary.
     # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
@@ -1191,6 +1192,13 @@ def launch_cutechess(
                     kill_process(p)
                 else:
                     print("done", flush=True)
+
+                print("Removing spsa nnue ...")
+                if Path(w_spsa_nnue).exists():
+                    Path(w_spsa_nnue).unlink()
+                if Path(b_spsa_nnue).exists():
+                    Path(b_spsa_nnue).unlink()
+
     except (OSError, subprocess.SubprocessError) as e:
         print(
             "Exception starting cutechess:\n",
@@ -1198,6 +1206,13 @@ def launch_cutechess(
             sep="",
             file=sys.stderr,
         )
+
+        print("Removing spsa nnue ...")
+        if Path(w_spsa_nnue).exists():
+            Path(w_spsa_nnue).unlink()
+        if Path(b_spsa_nnue).exists():
+            Path(b_spsa_nnue).unlink()
+
         raise WorkerException("Unable to start cutechess. Error: {}".format(str(e)))
 
     return task_alive
