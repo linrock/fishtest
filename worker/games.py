@@ -1118,65 +1118,66 @@ def launch_cutechess(
 
         with open("b_tune_options.csv", "w") as f:
             f.write(b_tune_options)
+
+        print(f"Preparing nnue from w_tune_options.csv ...")
+        w_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "w_tune_options.csv")
+
+        print(f"Preparing nnue from b_tune_options.csv ...")
+        b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
+
+        print()
+        print(f"w_spsa_nnue: {w_spsa_nnue}")
+        print(f"b_spsa_nnue: {b_spsa_nnue}")
+
+        stockfish_bin = None
+        for arg in cmd:
+            if arg.startswith('cmd=./'):
+                stockfish_bin = arg.split('cmd=./')[-1]
+                break
+
+        def get_bench_stats(stockfish_bin, nnue_filename):
+            uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
+            try:
+                p = subprocess.Popen(
+                    f"./{stockfish_bin}",
+                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    text=True
+                )
+                stdout, stderr = p.communicate(uci_cmds)
+            except (OSError, subprocess.SubprocessError) as e:
+                traceback.print_exc()
+
+            return "\n".join(stderr.strip().split("\n")[-4:])
+
+        print()
+        print(f"w_spsa_nnue: {w_spsa_nnue}")
+        print(get_bench_stats(stockfish_bin, w_spsa_nnue))
+        print()
+
+        print(f"b_spsa_nnue: {b_spsa_nnue}")
+        print(get_bench_stats(stockfish_bin, b_spsa_nnue))
+        print()
+
+        print('cmd before:')
+        print(cmd)
+
+        # use modified nnue EvalFile instead of setting spsa params
+        idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
+        cmd = (
+            cmd[:idx]
+            + [f"option.EvalFile={w_spsa_nnue}"]
+            + cmd[idx + 1 :]
+        )
+        idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
+        cmd = (
+            cmd[:idx]
+            + [f"option.EvalFile={b_spsa_nnue}"]
+            + cmd[idx + 1 :]
+        )
+
     else:
         w_params = []
         b_params = []
-
-    print(f"Preparing nnue from w_tune_options.csv ...")
-    w_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "w_tune_options.csv")
-
-    print(f"Preparing nnue from b_tune_options.csv ...")
-    b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
-
-    print()
-    print(f"w_spsa_nnue: {w_spsa_nnue}")
-    print(f"b_spsa_nnue: {b_spsa_nnue}")
-
-    stockfish_bin = None
-    for arg in cmd:
-        if arg.startswith('cmd=./'):
-            stockfish_bin = arg.split('cmd=./')[-1]
-            break
-
-    def get_bench_stats(stockfish_bin, nnue_filename):
-        uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
-        try:
-            p = subprocess.Popen(
-                f"./{stockfish_bin}",
-                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                text=True
-            )
-            stdout, stderr = p.communicate(uci_cmds)
-        except (OSError, subprocess.SubprocessError) as e:
-            traceback.print_exc()
-
-        return "\n".join(stderr.strip().split("\n")[-4:])
-
-    print()
-    print(f"w_spsa_nnue: {w_spsa_nnue}")
-    print(get_bench_stats(stockfish_bin, w_spsa_nnue))
-    print()
-
-    print(f"b_spsa_nnue: {b_spsa_nnue}")
-    print(get_bench_stats(stockfish_bin, b_spsa_nnue))
-    print()
-
-    print('cmd before:')
-    print(cmd)
-
-    # use modified nnue EvalFile instead of setting spsa params
-    idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
-    cmd = (
-        cmd[:idx]
-        + [f"option.EvalFile={w_spsa_nnue}"]
-        + cmd[idx + 1 :]
-    )
-    idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
-    cmd = (
-        cmd[:idx]
-        + [f"option.EvalFile={b_spsa_nnue}"]
-        + cmd[idx + 1 :]
-    )
 
     # Run cutechess-cli binary.
     # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
@@ -1193,18 +1194,19 @@ def launch_cutechess(
         + cmd[idx + 1 :]
     )
 
-    # Update engine names to contain modified nnue names
-    for i,c in enumerate(cmd):
-        if c.startswith('name=') and cmd[i+5].startswith('option.EvalFile='):
-            eval_file = cmd[i+5].split('=')[-1]
-            cmd[i] = f"{c.split('-')[0]}-{eval_file}"
+    if spsa_tuning:
+        # Update engine names to contain modified nnue names
+        for i,c in enumerate(cmd):
+            if c.startswith('name=') and cmd[i+5].startswith('option.EvalFile='):
+                eval_file = cmd[i+5].split('=')[-1]
+                cmd[i] = f"{c.split('-')[0]}-{eval_file}"
 
-    print()
-    print('cmd after:')
-    print(cmd)
-    print()
-    # print(" ".join(cmd))
-    # print()
+        print()
+        print('cmd after:')
+        print(cmd)
+        print()
+        # print(" ".join(cmd))
+        # print()
 
     try:
         with subprocess.Popen(
