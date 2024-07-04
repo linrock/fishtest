@@ -1134,7 +1134,7 @@ def launch_cutechess(
     stockfish_bin = None
     for arg in cmd:
         if arg.startswith('cmd=./'):
-            stockfish_bin = param.split('cmd=./')[-1]
+            stockfish_bin = arg.split('cmd=./')[-1]
             break
 
     def get_bench_stats(stockfish_bin, nnue_filename):
