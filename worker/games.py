@@ -1138,9 +1138,11 @@ def launch_cutechess(
             break
 
     def get_bench_stats(stockfish_bin, nnue_filename):
+        bench_cmd = f'echo -e "setoption name EvalFile value {nnue_filename}\\nbench" | ./{stockfish_bin}',
+        print(bench_cmd)
         try:
             p = subprocess.run(
-                f'echo -e "setoption name EvalFile value {nnue_filename}\nbench" | ./{stockfish_bin}',
+                bench_cmd,
                 shell=True, capture_output=True, text=True
             )
         except (OSError, subprocess.SubprocessError) as e:
