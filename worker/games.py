@@ -1149,7 +1149,7 @@ def launch_cutechess(
         if p.returncode != 0:
             print(f"Error getting bench from: {nnue_filename} with {stockfish_bin}")
 
-        return "\n".join(p.stdout.split("\n")[-4:])
+        return "\n".join(p.stderr.split("\n")[-4:])
 
     print()
     print(f"w_spsa_nnue: {w_spsa_nnue}")
