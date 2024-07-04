@@ -1138,11 +1138,18 @@ def launch_cutechess(
             break
 
     def get_bench_stats(stockfish_bin, nnue_filename):
-        bench_output = subprocess.run(
-            f'echo -e "setoption name EvalFile value {nnue_filename}\nbench" | ./{stockfish_bin}',
-            shell=True, capture_output=True, text=True
-        )
-        return bench_output.split("\n")[:-4]
+        try:
+            p = subprocess.run(
+                f'echo -e "setoption name EvalFile value {nnue_filename}\nbench" | ./{stockfish_bin}',
+                shell=True, capture_output=True, text=True
+            )
+        except (OSError, subprocess.SubprocessError) as e:
+            traceback.print_exc()
+
+        if p.returncode != 0:
+            print(f"Error getting bench from: {nnue_filename} with {stockfish_bin}")
+
+        return "\n".join(p.stdout.split("\n")[-4:])
 
     print()
     print(f"w_spsa_nnue: {w_spsa_nnue}")
