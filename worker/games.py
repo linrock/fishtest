@@ -1145,17 +1145,17 @@ def launch_cutechess(
 
     print()
     print(f"w_spsa_nnue: {w_spsa_nnue}")
-    print(get_bench_stats(w_spsa_nnue)
+    print(get_bench_stats(stockfish_bin, w_spsa_nnue))
     print()
 
     print(f"b_spsa_nnue: {b_spsa_nnue}")
-    print(get_bench_stats(b_spsa_nnue)
+    print(get_bench_stats(stockfish_bin, b_spsa_nnue))
     print()
 
     print('cmd before:')
     print(cmd)
 
-    # use modified nnue instead of setting spsa params at runtime
+    # use modified nnue EvalFile instead of setting spsa params
     idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
     cmd = (
         cmd[:idx]
@@ -1184,7 +1184,7 @@ def launch_cutechess(
         + cmd[idx + 1 :]
     )
 
-    # Update engine names to contain modified nnue rather than the same hash
+    # Update engine names to contain modified nnue names
     for i,c in enumerate(cmd):
         if c.startswith('name=') and cmd[i+5].startswith('option.EvalFile='):
             eval_file = cmd[i+5].split('=')[-1]
