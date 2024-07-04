@@ -1255,13 +1255,14 @@ def launch_cutechess(
                 else:
                     print("done", flush=True)
 
-                print("Removing spsa nnue: ", w_spsa_nnue)
-                if Path(w_spsa_nnue).exists():
-                    Path(w_spsa_nnue).unlink()
+                if spsa_tuning:
+                    print("Removing spsa nnue: ", w_spsa_nnue)
+                    if Path(w_spsa_nnue).exists():
+                        Path(w_spsa_nnue).unlink()
 
-                print("Removing spsa nnue: ", b_spsa_nnue)
-                if Path(b_spsa_nnue).exists():
-                    Path(b_spsa_nnue).unlink()
+                    print("Removing spsa nnue: ", b_spsa_nnue)
+                    if Path(b_spsa_nnue).exists():
+                        Path(b_spsa_nnue).unlink()
 
     except (OSError, subprocess.SubprocessError) as e:
         print(
@@ -1271,13 +1272,14 @@ def launch_cutechess(
             file=sys.stderr,
         )
 
-        print("Removing spsa nnue: ", w_spsa_nnue)
-        if Path(w_spsa_nnue).exists():
-            Path(w_spsa_nnue).unlink()
+        if spsa_tuning:
+            print("Removing spsa nnue: ", w_spsa_nnue)
+            if Path(w_spsa_nnue).exists():
+                Path(w_spsa_nnue).unlink()
 
-        print("Removing spsa nnue: ", b_spsa_nnue)
-        if Path(b_spsa_nnue).exists():
-            Path(b_spsa_nnue).unlink()
+            print("Removing spsa nnue: ", b_spsa_nnue)
+            if Path(b_spsa_nnue).exists():
+                Path(b_spsa_nnue).unlink()
 
         raise WorkerException("Unable to start cutechess. Error: {}".format(str(e)))
 
