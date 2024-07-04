@@ -1132,9 +1132,10 @@ def launch_cutechess(
     print(f"b_spsa_nnue: {b_spsa_nnue}")
 
     stockfish_bin = None
-    for param in w_params:
-        if param.startswith('cmd=./'):
+    for arg in cmd:
+        if arg.startswith('cmd=./'):
             stockfish_bin = param.split('cmd=./')[-1]
+            break
 
     def get_bench_stats(stockfish_bin, nnue_filename):
         bench_output = subprocess.run(
