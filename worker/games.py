@@ -1150,7 +1150,7 @@ def launch_cutechess(
         except (OSError, subprocess.SubprocessError) as e:
             traceback.print_exc()
 
-        return "\n".join(stderr.split("\n")[-4:])
+        return "\n".join(stderr.strip().split("\n")[-4:])
 
     print()
     print(f"w_spsa_nnue: {w_spsa_nnue}")
