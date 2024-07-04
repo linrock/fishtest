@@ -16,6 +16,7 @@ import sys
 import tempfile
 import threading
 import time
+import traceback
 from base64 import b64decode
 from contextlib import ExitStack
 from datetime import datetime, timedelta, timezone
@@ -1138,20 +1139,18 @@ def launch_cutechess(
             break
 
     def get_bench_stats(stockfish_bin, nnue_filename):
-        bench_cmd = f'echo -e "setoption name EvalFile value {nnue_filename}\\nbench" | ./{stockfish_bin}',
-        print(bench_cmd)
+        uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
         try:
-            p = subprocess.run(
-                bench_cmd,
-                shell=True, capture_output=True, text=True
+            p = subprocess.Popen(
+                f"./{stockfish_bin}",
+                stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                text=True
             )
+            stdout, stderr = p.communicate(uci_cmds)
         except (OSError, subprocess.SubprocessError) as e:
             traceback.print_exc()
 
-        if p.returncode != 0:
-            print(f"Error getting bench from: {nnue_filename} with {stockfish_bin}")
-
-        return "\n".join(p.stderr.split("\n")[-4:])
+        return "\n".join(stderr.split("\n")[-4:])
 
     print()
     print(f"w_spsa_nnue: {w_spsa_nnue}")
