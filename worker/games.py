@@ -1125,10 +1125,6 @@ def launch_cutechess(
         print(f"Preparing nnue from b_tune_options.csv ...")
         b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
 
-        print()
-        print(f"w_spsa_nnue: {w_spsa_nnue}")
-        print(f"b_spsa_nnue: {b_spsa_nnue}")
-
         stockfish_bin = None
         for arg in cmd:
             if arg.startswith('cmd=./'):
