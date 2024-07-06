@@ -1121,9 +1121,11 @@ def launch_cutechess(
 
         print(f"Preparing nnue from w_tune_options.csv ...")
         w_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "w_tune_options.csv")
+        print()
 
         print(f"Preparing nnue from b_tune_options.csv ...")
         b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
+        print()
 
         stockfish_bin = None
         for arg in cmd:
@@ -1145,7 +1147,6 @@ def launch_cutechess(
 
             return "\n".join(stderr.strip().split("\n")[-4:])
 
-        print()
         print(f"w_spsa_nnue: {w_spsa_nnue}")
         print(get_bench_stats(stockfish_bin, w_spsa_nnue))
         print()
@@ -1153,6 +1154,15 @@ def launch_cutechess(
         print(f"b_spsa_nnue: {b_spsa_nnue}")
         print(get_bench_stats(stockfish_bin, b_spsa_nnue))
         print()
+
+        # print time control
+        tc = {}
+        for arg in cmd:
+            if arg.startswith('tc='):
+                tc['tc'] = arg
+            elif arg.startswith('option.Threads'):
+                tc['threads'] = arg.split(".")[-1]
+        print(f"{tc['tc']} {tc['threads']}")
 
         print('cmd before:')
         print(cmd)
