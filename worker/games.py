@@ -1119,19 +1119,40 @@ def launch_cutechess(
         with open("b_tune_options.csv", "w") as f:
             f.write(b_tune_options)
 
-        print(f"Preparing nnue from w_tune_options.csv ...")
-        w_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "w_tune_options.csv")
-        print()
-
-        print(f"Preparing nnue from b_tune_options.csv ...")
-        b_spsa_nnue = modify_nnue("nn-ddcfb9224cdb.nnue", "b_tune_options.csv")
-        print()
-
+        # get path to the base branch stockfish binary
         stockfish_bin = None
         for arg in cmd:
             if arg.startswith('cmd=./'):
                 stockfish_bin = arg.split('cmd=./')[-1]
                 break
+
+        def get_eval_file_big(stockfish_bin):
+            uci_cmds = f"uci\nquit\n"
+            try:
+                p = subprocess.Popen(
+                    f"./{stockfish_bin}",
+                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                    text=True
+                )
+                stdout, stderr = p.communicate(uci_cmds)
+            except (OSError, subprocess.SubprocessError) as e:
+                traceback.print_exc()
+
+            for row in stdout.strip().split("\n"):
+                if ' EvalFile ' in row:
+                    return row.split(" ")[-1]
+
+        # base_nnue = "nn-ddcfb9224cdb.nnue"
+        base_nnue = get_eval_file_big(stockfish_bin)
+        print(f"EvalFile {base_nnue}")
+
+        print(f"Preparing nnue from w_tune_options.csv ...")
+        w_spsa_nnue = modify_nnue(base_nnue, "w_tune_options.csv")
+        print()
+
+        print(f"Preparing nnue from b_tune_options.csv ...")
+        b_spsa_nnue = modify_nnue(base_nnue, "b_tune_options.csv")
+        print()
 
         def get_bench_stats(stockfish_bin, nnue_filename):
             uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
@@ -1168,13 +1189,13 @@ def launch_cutechess(
         print(cmd)
 
         # use modified nnue EvalFile instead of setting spsa params
-        idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
+        idx = cmd.index(f"option.EvalFile={base_nnue}")
         cmd = (
             cmd[:idx]
             + [f"option.EvalFile={w_spsa_nnue}"]
             + cmd[idx + 1 :]
         )
-        idx = cmd.index('option.EvalFile=nn-ddcfb9224cdb.nnue')
+        idx = cmd.index(f"option.EvalFile={base_nnue}")
         cmd = (
             cmd[:idx]
             + [f"option.EvalFile={b_spsa_nnue}"]
