@@ -1142,24 +1142,6 @@ def launch_cutechess(
                 if ' EvalFile ' in row:
                     return row.split(" ")[-1]
 
-        base_nnue = get_eval_file_big(stockfish_bin)
-        # base_nnue = "nn-ddcfb9224cdb.nnue"
-
-        print(f"EvalFile {base_nnue}")
-
-        for token in cmd:
-            if token.startswith("option.EvalFile="):
-                base_nnue_check = token.split("option.EvalFile=")[-1]
-                print(f"option.EvalFile={base_nnue_check}")
-
-        print(f"Preparing nnue from w_tune_options.csv ...")
-        w_spsa_nnue = modify_nnue(base_nnue, "w_tune_options.csv")
-        print()
-
-        print(f"Preparing nnue from b_tune_options.csv ...")
-        b_spsa_nnue = modify_nnue(base_nnue, "b_tune_options.csv")
-        print()
-
         def get_bench_stats(stockfish_bin, nnue_filename):
             uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
             try:
@@ -1174,11 +1156,24 @@ def launch_cutechess(
 
             return "\n".join(stderr.strip().split("\n")[-4:])
 
-        print(f"w_spsa_nnue: {w_spsa_nnue}")
+        # get base nnue name a few different ways and print them
+        base_nnue = get_eval_file_big(stockfish_bin)
+        # base_nnue = "nn-ddcfb9224cdb.nnue"
+
+        print(f"EvalFile {base_nnue}")
+        for token in cmd:
+            if token.startswith("option.EvalFile="):
+                base_nnue_check = token.split("option.EvalFile=")[-1]
+                print(f"option.EvalFile={base_nnue_check}")
+        print()
+
+        print(f"Preparing nnue from {base_nnue} and w_tune_options.csv ...")
+        w_spsa_nnue = modify_nnue(base_nnue, "w_tune_options.csv")
         print(get_bench_stats(stockfish_bin, w_spsa_nnue))
         print()
 
-        print(f"b_spsa_nnue: {b_spsa_nnue}")
+        print(f"Preparing nnue from {base_nnue} and b_tune_options.csv ...")
+        b_spsa_nnue = modify_nnue(base_nnue, "b_tune_options.csv")
         print(get_bench_stats(stockfish_bin, b_spsa_nnue))
         print()
 
