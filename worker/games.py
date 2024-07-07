@@ -1142,9 +1142,15 @@ def launch_cutechess(
                 if ' EvalFile ' in row:
                     return row.split(" ")[-1]
 
-        # base_nnue = "nn-ddcfb9224cdb.nnue"
         base_nnue = get_eval_file_big(stockfish_bin)
+        # base_nnue = "nn-ddcfb9224cdb.nnue"
+
         print(f"EvalFile {base_nnue}")
+
+        for token in cmd:
+            if token.startswith("option.EvalFile="):
+                base_nnue_check = token.split("option.EvalFile=")[-1]
+                print(f"option.EvalFile={base_nnue_check}")
 
         print(f"Preparing nnue from w_tune_options.csv ...")
         w_spsa_nnue = modify_nnue(base_nnue, "w_tune_options.csv")
