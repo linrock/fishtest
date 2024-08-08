@@ -1112,97 +1112,132 @@ def launch_cutechess(
         w_tune_options = generate_tune_options(w_params)
         b_tune_options = generate_tune_options(b_params)
 
-        # Write option names and values to a file
-        with open("w_tune_options.csv", "w") as f:
-            f.write(w_tune_options)
+        param_names = set([param["name"] for param in w_params])
+        nnue_param_names = set([
+            # "ftW",
+            "ftB",
+            # "oneW"
+            "oneB",
+            "twoW",
+            "twoB",
+            "oW",
+            "oB",
+        ])
+        if any([p in nnue_param_names for p in param_names]):
+            # Write option names and values to a file
+            # with open("w_tune_options.csv", "w") as f:
+            #     f.write(w_tune_options)
 
-        with open("b_tune_options.csv", "w") as f:
-            f.write(b_tune_options)
+            # with open("b_tune_options.csv", "w") as f:
+            #     f.write(b_tune_options)
 
-        # get path to the base branch stockfish binary
-        stockfish_bin = None
-        for arg in cmd:
-            if arg.startswith('cmd=./'):
-                stockfish_bin = arg.split('cmd=./')[-1]
-                break
+            # get path to the base branch stockfish binary
+            stockfish_bin = None
+            for arg in cmd:
+                if arg.startswith('cmd=./'):
+                    stockfish_bin = arg.split('cmd=./')[-1]
+                    break
 
-        def get_eval_file_big(stockfish_bin):
-            uci_cmds = f"uci\nquit\n"
-            try:
-                p = subprocess.Popen(
-                    f"./{stockfish_bin}",
-                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                    text=True
-                )
-                stdout, stderr = p.communicate(uci_cmds)
-            except (OSError, subprocess.SubprocessError) as e:
-                traceback.print_exc()
+            def get_eval_file_big(stockfish_bin):
+                uci_cmds = f"uci\nquit\n"
+                try:
+                    p = subprocess.Popen(
+                        f"./{stockfish_bin}",
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                        text=True
+                    )
+                    stdout, stderr = p.communicate(uci_cmds)
+                except (OSError, subprocess.SubprocessError) as e:
+                    traceback.print_exc()
 
-            for row in stdout.strip().split("\n"):
-                if ' EvalFile ' in row:
-                    return row.split(" ")[-1]
+                for row in stdout.strip().split("\n"):
+                    if ' EvalFile ' in row:
+                        return row.split(" ")[-1]
 
-        def get_bench_stats(stockfish_bin, nnue_filename):
-            uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
-            try:
-                p = subprocess.Popen(
-                    f"./{stockfish_bin}",
-                    stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                    text=True
-                )
-                stdout, stderr = p.communicate(uci_cmds)
-            except (OSError, subprocess.SubprocessError) as e:
-                traceback.print_exc()
+            def get_bench_stats(stockfish_bin, nnue_filename):
+                uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
+                try:
+                    p = subprocess.Popen(
+                        f"./{stockfish_bin}",
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                        text=True
+                    )
+                    stdout, stderr = p.communicate(uci_cmds)
+                except (OSError, subprocess.SubprocessError) as e:
+                    traceback.print_exc()
 
-            return "\n".join(stderr.strip().split("\n")[-4:])
+                return "\n".join(stderr.strip().split("\n")[-4:])
 
-        # get base nnue name a few different ways and print them
-        base_nnue = get_eval_file_big(stockfish_bin)
-        # base_nnue = "nn-ddcfb9224cdb.nnue"
+            # get base nnue name a few different ways and print them
+            base_nnue = get_eval_file_big(stockfish_bin)
+            # base_nnue = "nn-ddcfb9224cdb.nnue"
 
-        print(f"EvalFile {base_nnue}")
-        for token in cmd:
-            if token.startswith("option.EvalFile="):
-                base_nnue_check = token.split("option.EvalFile=")[-1]
-                print(f"option.EvalFile={base_nnue_check}")
-        print()
+            print(f"EvalFile {base_nnue}")
+            for token in cmd:
+                if token.startswith("option.EvalFile="):
+                    base_nnue_check = token.split("option.EvalFile=")[-1]
+                    print(f"option.EvalFile={base_nnue_check}")
+            print()
 
-        print(f"Preparing nnue from {base_nnue} and w_tune_options.csv ...")
-        w_spsa_nnue = modify_nnue(base_nnue, "w_tune_options.csv")
-        print(get_bench_stats(stockfish_bin, w_spsa_nnue))
-        print()
+            print(f"Preparing nnue from {base_nnue} and w_tune_options.csv ...")
+            w_spsa_nnue = modify_nnue(base_nnue, "w_tune_options.csv")
+            print(get_bench_stats(stockfish_bin, w_spsa_nnue))
+            print()
 
-        print(f"Preparing nnue from {base_nnue} and b_tune_options.csv ...")
-        b_spsa_nnue = modify_nnue(base_nnue, "b_tune_options.csv")
-        print(get_bench_stats(stockfish_bin, b_spsa_nnue))
-        print()
+            print(f"Preparing nnue from {base_nnue} and b_tune_options.csv ...")
+            b_spsa_nnue = modify_nnue(base_nnue, "b_tune_options.csv")
+            print(get_bench_stats(stockfish_bin, b_spsa_nnue))
+            print()
 
-        # print time control
-        tc = {}
-        for arg in cmd:
-            if arg.startswith('tc='):
-                tc['tc'] = arg
-            elif arg.startswith('option.Threads'):
-                tc['threads'] = arg.split(".")[-1]
-        print(f"{tc['tc']} {tc['threads']}")
+            # print time control
+            tc = {}
+            for arg in cmd:
+                if arg.startswith('tc='):
+                    tc['tc'] = arg
+                elif arg.startswith('option.Threads'):
+                    tc['threads'] = arg.split(".")[-1]
+            print(f"{tc['tc']} {tc['threads']}")
 
-        print('cmd before:')
-        print(cmd)
+            print('cmd before:')
+            print(cmd)
 
-        # use modified nnue EvalFile instead of setting spsa params
-        idx = cmd.index(f"option.EvalFile={base_nnue}")
-        cmd = (
-            cmd[:idx]
-            + [f"option.EvalFile={w_spsa_nnue}"]
-            + cmd[idx + 1 :]
-        )
-        idx = cmd.index(f"option.EvalFile={base_nnue}")
-        cmd = (
-            cmd[:idx]
-            + [f"option.EvalFile={b_spsa_nnue}"]
-            + cmd[idx + 1 :]
-        )
-
+            # use modified nnue EvalFile instead of setting spsa params
+            idx = cmd.index(f"option.EvalFile={base_nnue}")
+            cmd = (
+                cmd[:idx]
+                + [f"option.EvalFile={w_spsa_nnue}"]
+                + cmd[idx + 1 :]
+            )
+            idx = cmd.index(f"option.EvalFile={base_nnue}")
+            cmd = (
+                cmd[:idx]
+                + [f"option.EvalFile={b_spsa_nnue}"]
+                + cmd[idx + 1 :]
+            )
+        else:
+            # set regular spsa params without the nnue-specific params
+            idx = cmd.index("_spsa_")
+            cmd = (
+                cmd[:idx]
+                + [
+                    "option.{}={}".format(
+                        x["name"], math.floor(x["value"] + random.uniform(0, 1))
+                    )
+                    for x in w_params if x["name"] not in nnue_param_names
+                ]
+                + cmd[idx + 1:]
+            )
+            idx = cmd.index("_spsa_")
+            cmd = (
+                cmd[:idx]
+                + [
+                    "option.{}={}".format(
+                        x["name"], math.floor(x["value"] + random.uniform(0, 1))
+                    )
+                    for x in b_params if x["name"] not in nnue_param_names
+                ]
+                + cmd[idx + 1:]
+            )
     else:
         w_params = []
         b_params = []
