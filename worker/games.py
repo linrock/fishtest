@@ -1214,48 +1214,34 @@ def launch_cutechess(
                 + [f"option.EvalFile={b_spsa_nnue}"]
                 + cmd[idx + 1 :]
             )
-        else:
-            # set regular spsa params without the nnue-specific params
-            idx = cmd.index("_spsa_")
-            cmd = (
-                cmd[:idx]
-                + [
-                    "option.{}={}".format(
-                        x["name"], math.floor(x["value"] + random.uniform(0, 1))
-                    )
-                    for x in w_params if x["name"] not in nnue_param_names
-                ]
-                + cmd[idx + 1:]
-            )
-            idx = cmd.index("_spsa_")
-            cmd = (
-                cmd[:idx]
-                + [
-                    "option.{}={}".format(
-                        x["name"], math.floor(x["value"] + random.uniform(0, 1))
-                    )
-                    for x in b_params if x["name"] not in nnue_param_names
-                ]
-                + cmd[idx + 1:]
-            )
+
+        # set regular spsa params without the nnue-specific params
+        # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
+        idx = cmd.index("_spsa_")
+        cmd = (
+            cmd[:idx]
+            + [
+                "option.{}={}".format(
+                    x["name"], math.floor(x["value"] + random.uniform(0, 1))
+                )
+                for x in w_params if x["name"] not in nnue_param_names
+            ]
+            + cmd[idx + 1:]
+        )
+        idx = cmd.index("_spsa_")
+        cmd = (
+            cmd[:idx]
+            + [
+                "option.{}={}".format(
+                    x["name"], math.floor(x["value"] + random.uniform(0, 1))
+                )
+                for x in b_params if x["name"] not in nnue_param_names
+            ]
+            + cmd[idx + 1:]
+        )
     else:
         w_params = []
         b_params = []
-
-    # Run cutechess-cli binary.
-    # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
-    idx = cmd.index("_spsa_")
-    cmd = (
-        cmd[:idx]
-        # + (["option.TuneFile=w_tune_options.csv"] if len(w_params) != 0 else [])
-        + cmd[idx + 1 :]
-    )
-    idx = cmd.index("_spsa_")
-    cmd = (
-        cmd[:idx]
-        # + (["option.TuneFile=b_tune_options.csv"] if len(b_params) != 0 else [])
-        + cmd[idx + 1 :]
-    )
 
     if spsa_tuning:
         # Update engine names to contain modified nnue names
@@ -1268,9 +1254,6 @@ def launch_cutechess(
         print('cmd after:')
         print(cmd)
         print()
-        # print(" ".join(cmd))
-        # print()
-
     try:
         with subprocess.Popen(
             cmd,
