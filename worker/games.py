@@ -1112,7 +1112,9 @@ def launch_cutechess(
         w_tune_options = generate_tune_options(w_params)
         b_tune_options = generate_tune_options(b_params)
 
-        param_names = set([param["name"] for param in w_params])
+        param_names = set([param["name"].split("[")[0] for param in w_params])
+        print("w_params param_names:", param_names)
+
         nnue_param_names = set([
             # "ftW",
             "ftB",
