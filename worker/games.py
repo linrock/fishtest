@@ -1217,33 +1217,34 @@ def launch_cutechess(
                 + cmd[idx + 1 :]
             )
 
-        # set regular spsa params without the nnue-specific params
-        # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
-        idx = cmd.index("_spsa_")
-        cmd = (
-            cmd[:idx]
-            + [
-                "option.{}={}".format(
-                    x["name"], math.floor(x["value"] + random.uniform(0, 1))
-                )
-                for x in w_params if x["name"].split("[")[0] not in nnue_param_names
-            ]
-            + cmd[idx + 1:]
-        )
-        idx = cmd.index("_spsa_")
-        cmd = (
-            cmd[:idx]
-            + [
-                "option.{}={}".format(
-                    x["name"], math.floor(x["value"] + random.uniform(0, 1))
-                )
-                for x in b_params if x["name"].split("[")[0] not in nnue_param_names
-            ]
-            + cmd[idx + 1:]
-        )
     else:
         w_params = []
         b_params = []
+
+    # set regular spsa params without the nnue-specific params
+    # Stochastic rounding and probability for float N.p: (N, 1-p); (N+1, p)
+    idx = cmd.index("_spsa_")
+    cmd = (
+        cmd[:idx]
+        + [
+            "option.{}={}".format(
+                x["name"], math.floor(x["value"] + random.uniform(0, 1))
+            )
+            for x in w_params if x["name"].split("[")[0] not in nnue_param_names
+        ]
+        + cmd[idx + 1:]
+    )
+    idx = cmd.index("_spsa_")
+    cmd = (
+        cmd[:idx]
+        + [
+            "option.{}={}".format(
+                x["name"], math.floor(x["value"] + random.uniform(0, 1))
+            )
+            for x in b_params if x["name"].split("[")[0] not in nnue_param_names
+        ]
+        + cmd[idx + 1:]
+    )
 
     if spsa_tuning:
         # Update engine names to contain modified nnue names
