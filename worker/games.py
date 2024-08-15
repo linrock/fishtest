@@ -1226,7 +1226,7 @@ def launch_cutechess(
                 "option.{}={}".format(
                     x["name"], math.floor(x["value"] + random.uniform(0, 1))
                 )
-                for x in w_params if x["name"] not in nnue_param_names
+                for x in w_params if x["name"].split("[")[0] not in nnue_param_names
             ]
             + cmd[idx + 1:]
         )
@@ -1237,7 +1237,7 @@ def launch_cutechess(
                 "option.{}={}".format(
                     x["name"], math.floor(x["value"] + random.uniform(0, 1))
                 )
-                for x in b_params if x["name"] not in nnue_param_names
+                for x in b_params if x["name"].split("[")[0] not in nnue_param_names
             ]
             + cmd[idx + 1:]
         )
