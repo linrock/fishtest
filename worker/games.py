@@ -1118,7 +1118,7 @@ def launch_cutechess(
         nnue_param_names = set([
             # "ftW",
             "ftB",
-            "oneW"
+            "oneW",
             "oneB",
             "twoW",
             "twoB",
