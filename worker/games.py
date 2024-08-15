@@ -1116,7 +1116,7 @@ def launch_cutechess(
         nnue_param_names = set([
             # "ftW",
             "ftB",
-            # "oneW"
+            "oneW"
             "oneB",
             "twoW",
             "twoB",
@@ -1125,11 +1125,11 @@ def launch_cutechess(
         ])
         if any([p in nnue_param_names for p in param_names]):
             # Write option names and values to a file
-            # with open("w_tune_options.csv", "w") as f:
-            #     f.write(w_tune_options)
+            with open("w_tune_options.csv", "w") as f:
+                f.write(w_tune_options)
 
-            # with open("b_tune_options.csv", "w") as f:
-            #     f.write(b_tune_options)
+            with open("b_tune_options.csv", "w") as f:
+                f.write(b_tune_options)
 
             # get path to the base branch stockfish binary
             stockfish_bin = None
