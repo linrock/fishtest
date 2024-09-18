@@ -1125,7 +1125,8 @@ def launch_cutechess(
             "oW",
             "oB",
         ])
-        if any([p in nnue_param_names for p in param_names]):
+        nnue_tuning = any([p in nnue_param_names for p in param_names])
+        if nnue_tuning:
             # Write option names and values to a file
             with open("w_tune_options.csv", "w") as f:
                 f.write(w_tune_options)
@@ -1304,7 +1305,7 @@ def launch_cutechess(
                 else:
                     print("done", flush=True)
 
-                if spsa_tuning:
+                if nnue_tuning:
                     print("Removing spsa nnue: ", w_spsa_nnue)
                     if Path(w_spsa_nnue).exists():
                         Path(w_spsa_nnue).unlink()
