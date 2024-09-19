@@ -1305,7 +1305,7 @@ def launch_cutechess(
                 else:
                     print("done", flush=True)
 
-                if nnue_tuning:
+                if spsa_tuning and nnue_tuning:
                     print("Removing spsa nnue: ", w_spsa_nnue)
                     if Path(w_spsa_nnue).exists():
                         Path(w_spsa_nnue).unlink()
