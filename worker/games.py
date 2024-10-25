@@ -1141,7 +1141,7 @@ def launch_cutechess(
                     stockfish_bin = arg.split('cmd=./')[-1]
                     break
 
-            def get_eval_file_big(stockfish_bin):
+            def get_eval_file_small(stockfish_bin):
                 uci_cmds = f"uci\nquit\n"
                 try:
                     p = subprocess.Popen(
@@ -1154,11 +1154,11 @@ def launch_cutechess(
                     traceback.print_exc()
 
                 for row in stdout.strip().split("\n"):
-                    if ' EvalFile ' in row:
+                    if ' EvalFileSmall ' in row:
                         return row.split(" ")[-1]
 
             def get_bench_stats(stockfish_bin, nnue_filename):
-                uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
+                uci_cmds = f"setoption name EvalFileSmall value {nnue_filename}\nbench\nquit\n"
                 try:
                     p = subprocess.Popen(
                         f"./{stockfish_bin}",
@@ -1172,14 +1172,14 @@ def launch_cutechess(
                 return "\n".join(stderr.strip().split("\n")[-4:])
 
             # get base nnue name a few different ways and print them
-            base_nnue = get_eval_file_big(stockfish_bin)
+            base_nnue = get_eval_file_small(stockfish_bin)
             # base_nnue = "nn-ddcfb9224cdb.nnue"
 
-            print(f"EvalFile {base_nnue}")
+            print(f"EvalFileSmall {base_nnue}")
             for token in cmd:
-                if token.startswith("option.EvalFile="):
-                    base_nnue_check = token.split("option.EvalFile=")[-1]
-                    print(f"option.EvalFile={base_nnue_check}")
+                if token.startswith("option.EvalFileSmall="):
+                    base_nnue_check = token.split("option.EvalFileSmall=")[-1]
+                    print(f"option.EvalFileSmall={base_nnue_check}")
             print()
 
             print(f"Preparing nnue from {base_nnue} and w_tune_options.csv ...")
@@ -1204,17 +1204,17 @@ def launch_cutechess(
             print('cmd before:')
             print(cmd)
 
-            # use modified nnue EvalFile instead of setting spsa params
-            idx = cmd.index(f"option.EvalFile={base_nnue}")
+            # use modified nnue EvalFileSmall instead of setting spsa params
+            idx = cmd.index(f"option.EvalFileSmall={base_nnue}")
             cmd = (
                 cmd[:idx]
-                + [f"option.EvalFile={w_spsa_nnue}"]
+                + [f"option.EvalFileSmall={w_spsa_nnue}"]
                 + cmd[idx + 1 :]
             )
-            idx = cmd.index(f"option.EvalFile={base_nnue}")
+            idx = cmd.index(f"option.EvalFileSmall={base_nnue}")
             cmd = (
                 cmd[:idx]
-                + [f"option.EvalFile={b_spsa_nnue}"]
+                + [f"option.EvalFileSmall={b_spsa_nnue}"]
                 + cmd[idx + 1 :]
             )
 
@@ -1250,7 +1250,7 @@ def launch_cutechess(
     if spsa_tuning:
         # Update engine names to contain modified nnue names
         for i,c in enumerate(cmd):
-            if c.startswith('name=') and cmd[i+5].startswith('option.EvalFile='):
+            if c.startswith('name=') and cmd[i+5].startswith('option.EvalFileSmall='):
                 eval_file = cmd[i+5].split('=')[-1]
                 cmd[i] = f"{c.split('-')[0]}-{eval_file}"
 
