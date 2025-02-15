@@ -1154,8 +1154,8 @@ def launch_fastchess(
             stockfish_bin = None
             print(cmd)
             for arg in cmd:
-                if arg.startswith('cmd=./'):
-                    stockfish_bin = arg.split('cmd=./')[-1]
+                if arg.startswith('cmd='):
+                    stockfish_bin = arg.split('cmd=')[-1]
                     break
 
             def get_eval_file_big(stockfish_bin):
