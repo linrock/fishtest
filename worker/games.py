@@ -1162,7 +1162,7 @@ def launch_fastchess(
                 uci_cmds = f"uci\nquit\n"
                 try:
                     p = subprocess.Popen(
-                        f"./{stockfish_bin}",
+                        f"{stockfish_bin}",
                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                         text=True
                     )
@@ -1178,7 +1178,7 @@ def launch_fastchess(
                 uci_cmds = f"setoption name EvalFile value {nnue_filename}\nbench\nquit\n"
                 try:
                     p = subprocess.Popen(
-                        f"./{stockfish_bin}",
+                        f"{stockfish_bin}",
                         stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                         text=True
                     )
