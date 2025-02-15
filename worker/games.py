@@ -1152,6 +1152,7 @@ def launch_fastchess(
 
             # get path to the base branch stockfish binary
             stockfish_bin = None
+            print(cmd)
             for arg in cmd:
                 if arg.startswith('cmd=./'):
                     stockfish_bin = arg.split('cmd=./')[-1]
